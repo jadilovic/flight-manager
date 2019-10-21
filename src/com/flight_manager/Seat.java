@@ -14,6 +14,12 @@ public class Seat {
 		
 	}
 	
+	public Seat(String row, Integer seatNumber, boolean availabe){
+		setRow(row);
+		setSeatNumber(seatNumber);
+		setAvailable(available);
+	}
+	
 	public String getRow() {
 		return row;
 	}

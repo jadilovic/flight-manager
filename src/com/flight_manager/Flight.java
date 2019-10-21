@@ -2,7 +2,7 @@ package com.flight_manager;
 
 import java.util.ArrayList;
 
-public class Flight {
+public class Flight extends Airline{
 	//unique ID
 	private Integer id;
 	
@@ -23,6 +23,15 @@ public class Flight {
 	
 	public Flight() {
 		
+	}
+	
+	public Flight(String airlineName, String origin, String destination, Integer id){
+		this.id = id;
+		setName(airlineName);
+		this.origin = origin;
+		this.destination = destination;
+		getSeats();
+		getAirport();
 	}
 
 	public Integer getId() {

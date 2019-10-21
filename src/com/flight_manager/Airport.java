@@ -10,7 +10,7 @@ public class Airport {
 	}
 	
 	public Airport(String name) {
-		this.name = name;
+		setName(name);
 	}
 
 	public String getName() {
