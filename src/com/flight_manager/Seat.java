@@ -8,7 +8,7 @@ public class Seat {
 	private Integer seatNumber;
 	
 	//is it booked, or it is available
-	private boolean available;
+	private boolean available = true;
 	
 	public Seat() {
 		
@@ -41,7 +41,7 @@ public class Seat {
 
 	@Override
 	public String toString() {
-		return "Seat [row=" + row + ", seatNumber=" + seatNumber + ", available=" + available + "]";
+		return "Seat [row=" + row + ", seatNumber=" + seatNumber + ", available=" + available + "\n]";
 	}
 	
 	

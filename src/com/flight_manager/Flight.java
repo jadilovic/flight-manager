@@ -6,6 +6,9 @@ public class Flight extends Airline{
 	//unique ID
 	private Integer id;
 	
+	//flight name
+	private String flightName;
+	
 	//which airline owns this flight
 	private Airline airline;
 	
@@ -13,7 +16,7 @@ public class Flight extends Airline{
 	private Airport airport;
 	
 	//all seats in this flight
-	private ArrayList<Seat> seats;
+	private static ArrayList<Seat> seats;
 	
 	//city where it takes off from
 	private String origin;
@@ -25,13 +28,14 @@ public class Flight extends Airline{
 		
 	}
 	
-	public Flight(String airlineName, String origin, String destination, Integer id){
+	public Flight(Integer id, String flightName, Airline airline, Airport airport, ArrayList<Seat> seats,  String origin, String destination){
 		this.id = id;
-		setName(airlineName);
+		this.flightName = flightName;
+		this.airline = airline;
+		this.airport = airport;
+		setSeats(seats);
 		this.origin = origin;
 		this.destination = destination;
-		getSeats();
-		getAirport();
 	}
 
 	public Integer getId() {
@@ -50,12 +54,26 @@ public class Flight extends Airline{
 		this.airline = airline;
 	}
 
-	public ArrayList<Seat> getSeats() {
+	public static ArrayList<Seat> createSeats(Integer numberOfSeatsPerRow) {
+		ArrayList<Seat> seats = new ArrayList<>();
+		Seat seat;
+		String [] rows = {"A", "B", "C", "D", "E", "F"};
+		for(int i = 0; i < rows.length; i++){
+			for(int j = 1; j <= numberOfSeatsPerRow; j++){
+				seat = new Seat(rows[i], j, true);
+				seats.add(seat);
+			}
+		}
+		setSeats(seats);
 		return seats;
 	}
 
-	public void setSeats(ArrayList<Seat> seats) {
-		this.seats = seats;
+	public static void setSeats(ArrayList<Seat> newSeats) {
+		seats = newSeats;
+	}
+	
+	public ArrayList<Seat> getSeats(){
+		return seats;
 	}
 
 	public String getOrigin() {
@@ -82,10 +100,24 @@ public class Flight extends Airline{
 		this.airport = airport;
 	}
 
+	/**
+	 * @return the flightName
+	 */
+	public String getFlightName() {
+		return flightName;
+	}
+
+	/**
+	 * @param flightName the flightName to set
+	 */
+	public void setFlightName(String flightName) {
+		this.flightName = flightName;
+	}
+
 	@Override
 	public String toString() {
 		return "Flight [id=" + id + ", airline=" + airline + ", seats=" + seats + ", origin=" + origin
-				+ ", destination=" + destination + "]";
+				+ ", destination=" + destination + ", flight name=" + flightName + "]";
 	}
 	
 	
