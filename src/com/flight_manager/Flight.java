@@ -2,7 +2,7 @@ package com.flight_manager;
 
 import java.util.ArrayList;
 
-public class Flight extends Airline{
+public class Flight{
 	//unique ID
 	private Integer id;
 	
@@ -64,7 +64,6 @@ public class Flight extends Airline{
 				seats.add(seat);
 			}
 		}
-		setSeats(seats);
 		return seats;
 	}
 

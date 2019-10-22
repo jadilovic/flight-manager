@@ -41,7 +41,7 @@ public class Seat {
 
 	@Override
 	public String toString() {
-		return "Seat [row=" + row + ", seatNumber=" + seatNumber + ", available=" + available + "\n]";
+		return "\nSeat [row=" + row + ", seatNumber=" + seatNumber + ", available=" + available + "]";
 	}
 	
 	
