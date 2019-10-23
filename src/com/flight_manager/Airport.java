@@ -1,3 +1,10 @@
+/*
+ * Flight Manager App
+ * By: Jasmin Adilovic
+ * E-mail: adilovic79yahoo.com
+ * Date: OCT 2019
+ */
+
 package com.flight_manager;
 
 public class Airport {
@@ -6,7 +13,6 @@ public class Airport {
 	
 	
 	public Airport() {
-		
 	}
 	
 	public Airport(String name) {

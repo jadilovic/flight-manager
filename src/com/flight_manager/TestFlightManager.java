@@ -1,3 +1,26 @@
+/*
+ * Flight Manager App
+ * By: Jasmin Adilovic
+ * E-mail: adilovic79yahoo.com
+ * Date: OCT 2019
+ * ***Flight manager application***
+
+1. An airport must have a name consisting of exactly three alphabetical
+ characters. No two airports can have the same name.
+2. An airline has a name that must have less than 6 alphabetic
+ characters. No two airlines can have the same name.
+3. Each flight consists of seats organized in rows. Each row is labeled
+ with ("A", "B", "C", "D", "E", "F"). Each row has number of seats 
+in row.
+4. Every flight has an airport,airline origin destination and seats.
+ 
+ User can:
+ 	-Create airport
+ 	-Create airline
+ 	-Create flight
+ 	-Book a seat on a flight
+ */
+
 package com.flight_manager;
 
 import java.util.ArrayList;
@@ -53,44 +76,35 @@ public class TestFlightManager extends SystemManager{
 		input.close();
 	}
 
-	private static void enterDataToBookSeat() {
+	// CASE 1: Asking for name to create Airport
+	private static void enterAirportName() {
 		Scanner input = new Scanner(System.in);
-		System.out.println("Please enter Airline name");
-		String airlineName = input.next();
-		System.out.println("Please enter Flight name");
-		String flightName = input.next();
+		System.out.println("Please enter the name of the Airport");
+		String givenName = input.nextLine();
 		
-		Flight flight = selectSeat(airlineName, flightName);
-		
-		System.out.println("Please enter the seat number");
-		int seatNumber = input.nextInt();
-		System.out.println("Please enter the row");
-		String row = input.next();
-		Seat seat = bookSeat(seatNumber, row, flight);
-		
-		System.out.println("You have booked seat " + seat.toString());
+		// Creating Airport based on given name
+		Airport newAirport = createAirport(givenName);
+		if(newAirport == null)
+			System.out.println("Try again");
+		else
+		System.out.println("New Airport with the name '" + newAirport.getName() + "' was created");
 	}
-
-	private static void enterOriginAndDestination() {
+	
+	// CASE 2: Asking for name to create Airline
+	private static void enterAirlineName() {
 		Scanner input = new Scanner(System.in);
-		List<Flight> availableFlights = new ArrayList<>();
+		System.out.println("Please enter the name of the Airline");
+		String givenName = input.nextLine();
 		
-		System.out.println("Please enter origin of the Flight");
-		String flightOrigin = input.next();
-		System.out.println("Please enter destination of the Flight");
-		String flightDestination = input.next();
-		availableFlights = findAvailableFlights(flightOrigin, flightDestination);
-		if(availableFlights == null)
-			System.out.println("There are no available flights for the orgin and destination provided");
-		else{
-			for(Flight flight: availableFlights){
-				System.out.println("Available flight is " + flight.getFlightName() + " from " + flight.getOrigin() + " to "
-						+ "" + flight.getDestination());
-			}
-		}
+		// Creating Airline based on the given name
+		Airline newAirline = createAirline(givenName);
+		if(newAirline == null)
+			System.out.println("Try again");
+		else
+		System.out.println("New Airline with the name '" + newAirline.getName() + "' was created");
 	}
-
-	// Selection 3 to create a Flight
+	
+	// CASE 3: Create a Flight
 	private static void enterFlightData() {
 		Scanner input = new Scanner(System.in);
 		
@@ -110,7 +124,7 @@ public class TestFlightManager extends SystemManager{
 		// Entering initial data collected to create a Flight
 		Flight newFlight = createFlight(flightName, flightOrigin, flightDestination, id);
 		
-		// If entered data is not valide asking user to try again
+		// If entered data is not valid asking user to try again
 		if(newFlight == null)
 			System.out.println("Try again");
 		else{
@@ -119,32 +133,64 @@ public class TestFlightManager extends SystemManager{
 		System.out.println(newFlight.toString());
 		}
 	}
-
-	// Asking for name to create Airline
-	private static void enterAirlineName() {
+	
+	// CASE 4: Finding Flight
+	private static void enterOriginAndDestination() {
 		Scanner input = new Scanner(System.in);
-		System.out.println("Please enter the name of the Airline");
-		String givenName = input.nextLine();
+		List<Flight> availableFlights = new ArrayList<>();
 		
-		// Creating Airline based on the given name
-		Airline newAirline = createAirline(givenName);
-		if(newAirline == null)
-			System.out.println("Try again");
-		else
-		System.out.println("New Airline with the name '" + newAirline.getName() + "' was created");
+		System.out.println("Please enter origin of the Flight");
+		String flightOrigin = input.next();
+		System.out.println("Please enter destination of the Flight");
+		String flightDestination = input.next();
+		
+		// Searching for available flights based on entered origin and destination
+		availableFlights = findAvailableFlights(flightOrigin, flightDestination);
+		
+		if(availableFlights == null)
+			System.out.println("There are no available flights for the orgin and destination provided");
+		else{
+			// Printing available flight for the user to see and choose from
+			for(Flight flight: availableFlights){
+				System.out.println("Available flight is " + flight.getFlightName() + " from " + flight.getOrigin() + " to "
+						+ "" + flight.getDestination());
+			}
+		}
 	}
-
-	// Asking for name to create Airport
-	private static void enterAirportName() {
+	
+	// CASE 5: entering initial data to book a seat
+	private static void enterDataToBookSeat() {
 		Scanner input = new Scanner(System.in);
-		System.out.println("Please enter the name of the Airport");
-		String givenName = input.nextLine();
 		
-		// Creating Airport based on given name
-		Airport newAirport = createAirport(givenName);
-		if(newAirport == null)
-			System.out.println("Try again");
-		else
-		System.out.println("New Airport with the name '" + newAirport.getName() + "' was created");
+		System.out.println("Please enter Airline name");
+		String airlineName = input.next();
+		
+		System.out.println("Please enter Flight name");
+		String flightName = input.next();
+		
+		// checking for available seats based on the give Flight and Airline
+		Flight flight = availableSeats(airlineName, flightName);
+		
+		// If there is no flight or all seats are taken user needs to try again
+		if(flight == null)
+			System.out.println("Please try again");
+		else{
+			
+			// If there are available seats on a flight user can choose seat number and row
+			System.out.println("Please enter the seat number");
+			int seatNumber = input.nextInt();
+			
+			System.out.println("Please enter the row");
+			String row = input.next();
+			
+			Seat seat = bookSeat(seatNumber, row.toUpperCase(), flight);
+			
+			// If seat was not booked user needs to try again
+			if(seat == null){
+				System.out.println("Please try again");
+			} else {
+				System.out.println("You have booked seat " + seat.toString());
+			}
+		}
 	}
 }

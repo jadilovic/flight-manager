@@ -1,3 +1,10 @@
+/*
+ * Flight Manager App
+ * By: Jasmin Adilovic
+ * E-mail: adilovic79yahoo.com
+ * Date: OCT 2019
+ */
+
 package com.flight_manager;
 
 import java.util.ArrayList;
@@ -25,9 +32,9 @@ public class Flight{
 	private String destination;
 	
 	public Flight() {
-		
 	}
 	
+	// Overloaded constructor to collect all data needed to create Flight
 	public Flight(Integer id, String flightName, Airline airline, Airport airport, ArrayList<Seat> seats,  String origin, String destination){
 		this.id = id;
 		this.flightName = flightName;
@@ -54,6 +61,7 @@ public class Flight{
 		this.airline = airline;
 	}
 
+	// Method to create seats for the Flight based on the number of seats per row
 	public static ArrayList<Seat> createSeats(Integer numberOfSeatsPerRow) {
 		ArrayList<Seat> seats = new ArrayList<>();
 		Seat seat;

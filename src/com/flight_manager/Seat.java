@@ -1,3 +1,10 @@
+/*
+ * Flight Manager App
+ * By: Jasmin Adilovic
+ * E-mail: adilovic79yahoo.com
+ * Date: OCT 2019
+ */
+
 package com.flight_manager;
 
 public class Seat {
@@ -11,9 +18,9 @@ public class Seat {
 	private boolean available = true;
 	
 	public Seat() {
-		
 	}
 	
+	// Overloaded constructor in order to accept all needed data to create Seat
 	public Seat(String row, Integer seatNumber, boolean availabe){
 		setRow(row);
 		setSeatNumber(seatNumber);
@@ -23,18 +30,23 @@ public class Seat {
 	public String getRow() {
 		return row;
 	}
+	
 	public void setRow(String row) {
 		this.row = row;
 	}
+	
 	public Integer getSeatNumber() {
 		return seatNumber;
 	}
+	
 	public void setSeatNumber(Integer seatNumber) {
 		this.seatNumber = seatNumber;
 	}
+	
 	public boolean isAvailable() {
 		return available;
 	}
+	
 	public void setAvailable(boolean available) {
 		this.available = available;
 	}

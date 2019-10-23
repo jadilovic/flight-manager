@@ -1,15 +1,17 @@
-package com.flight_manager;
+/*
+ * Flight Manager App
+ * By: Jasmin Adilovic
+ * E-mail: adilovic79yahoo.com
+ * Date: OCT 2019
+ */
 
-import java.util.ArrayList;
-import java.util.List;
+package com.flight_manager;
 
 public class Airline {
 	
 	private String name;
-	private List<String> names = new ArrayList<>();
 	
 	public Airline(){
-		
 	}
 	
 	public Airline(String name){
@@ -22,7 +24,6 @@ public class Airline {
 
 	public void setName(String name) {
 		this.name = name;
-		names.add(name);
 	}
 
 	@Override
