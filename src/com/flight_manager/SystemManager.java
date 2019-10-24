@@ -7,6 +7,10 @@
 
 package com.flight_manager;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,9 +21,11 @@ public class SystemManager extends Flight{
 	private static List<Airport> listOfAirports = new ArrayList<>();
 	private static List<Flight> listOfFlights = new ArrayList<>();
 	private static List<Airline> listOfAirlines = new ArrayList<>();
+	static Scanner input = new Scanner(System.in);
+	static Connection conn = ConnManagerFlights.getInstance().getConnection();
 	
 	// Checking conditions before creating Airport name
-	public static Airport createAirport(String name) {
+	public static Airport createAirport(String name) throws SQLException {
 		if(airportAlreadyExists(name)){
 			System.out.println("Entered airport name '" + name + "' already exists");
 			return null;
@@ -34,9 +40,21 @@ public class SystemManager extends Flight{
 		}
 		// Creating Airport if given name meets all criteria
 		else{
-			Airport airPortName = new Airport(name);
-			listOfAirports.add(airPortName);
-			return airPortName;
+			String sqlQuery = "INSERT INTO airport (name, city) VALUES (?, ?)";
+			System.out.println("Enter the city of the airport");
+			String city = input.next();
+			try(PreparedStatement pstat = conn.prepareStatement(sqlQuery);){
+				
+				pstat.setString(1, name);
+				pstat.setString(2, city);
+				pstat.executeUpdate();
+				
+				System.out.println("New airport wiht name " + name + " has been created in the SQL database\n");
+				
+				Airport airPortName = new Airport(name);
+				listOfAirports.add(airPortName);
+				return airPortName;
+			}
 		}
 	}
 	
@@ -48,14 +66,30 @@ public class SystemManager extends Flight{
 	}
 
 	// Checking if given name for Airport already exists before creating new Airport
-	private static boolean airportAlreadyExists(String name) {
-		if(listOfAirports == null)
-			return false;
-		for(Airport airport: listOfAirports){
-			if(airport.getName().equals(name))
+	private static boolean airportAlreadyExists(String name) throws SQLException {
+		String sqlQuery = "SELECT * FROM airport WHERE name = ?";
+		String test1 = null;
+		String test2 = null;
+		ResultSet rs = null;
+		try(PreparedStatement pstat = conn.prepareStatement(sqlQuery);){
+			pstat.setString(1, name);
+			rs = pstat.executeQuery();
+			while(rs.next()){
+				test1 = rs.getString("name");
+				test2 = rs.getString("city");
+			}
+			if(test1 == null)
+				return false;
+			else
 				return true;
 		}
-		return false;
+		// if(listOfAirports == null)
+		//	return false;
+		//for(Airport airport: listOfAirports){
+		//	if(airport.getName().equals(name))
+		//		return true;
+		//}
+		//return false;
 	}
 
 	// Checking conditions before creating Airline
@@ -93,7 +127,6 @@ public class SystemManager extends Flight{
 
 	// Before flight is created additional data must be entered by the user
 	public static Flight createFlight(String name, String origin, String destination, Integer id) {
-		Scanner input = new Scanner(System.in);
 		
 		System.out.println("Please enter the name of the Airline");
 		String airlineName = input.next();

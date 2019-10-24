@@ -23,15 +23,17 @@ in row.
 
 package com.flight_manager;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class TestFlightManager extends SystemManager{
+	
+	static Scanner input = new Scanner(System.in);
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		
-		Scanner input = new Scanner(System.in);
 		int option = 0;
 		
 		while(option != 6){
@@ -77,13 +79,12 @@ public class TestFlightManager extends SystemManager{
 	}
 
 	// CASE 1: Asking for name to create Airport
-	private static void enterAirportName() {
-		Scanner input = new Scanner(System.in);
+	private static void enterAirportName() throws SQLException {
 		System.out.println("Please enter the name of the Airport");
-		String givenName = input.nextLine();
+		String givenName = input.next();
 		
 		// Creating Airport based on given name
-		Airport newAirport = createAirport(givenName);
+		Airport newAirport = createAirport(givenName.toUpperCase());
 		if(newAirport == null)
 			System.out.println("Try again");
 		else
@@ -92,12 +93,11 @@ public class TestFlightManager extends SystemManager{
 	
 	// CASE 2: Asking for name to create Airline
 	private static void enterAirlineName() {
-		Scanner input = new Scanner(System.in);
 		System.out.println("Please enter the name of the Airline");
-		String givenName = input.nextLine();
+		String givenName = input.next();
 		
 		// Creating Airline based on the given name
-		Airline newAirline = createAirline(givenName);
+		Airline newAirline = createAirline(givenName.toUpperCase());
 		if(newAirline == null)
 			System.out.println("Try again");
 		else
@@ -106,7 +106,6 @@ public class TestFlightManager extends SystemManager{
 	
 	// CASE 3: Create a Flight
 	private static void enterFlightData() {
-		Scanner input = new Scanner(System.in);
 		
 		// Collecting input of initial data to create a flight
 		System.out.println("Please enter the name of the Flight");
@@ -136,7 +135,6 @@ public class TestFlightManager extends SystemManager{
 	
 	// CASE 4: Finding Flight
 	private static void enterOriginAndDestination() {
-		Scanner input = new Scanner(System.in);
 		List<Flight> availableFlights = new ArrayList<>();
 		
 		System.out.println("Please enter origin of the Flight");
@@ -160,7 +158,6 @@ public class TestFlightManager extends SystemManager{
 	
 	// CASE 5: entering initial data to book a seat
 	private static void enterDataToBookSeat() {
-		Scanner input = new Scanner(System.in);
 		
 		System.out.println("Please enter Airline name");
 		String airlineName = input.next();
