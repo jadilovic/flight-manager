@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -146,7 +147,7 @@ public class SystemManager extends Flight{
 	}
 
 	// Before flight is created additional data must be entered by the user
-	public static Flight createFlight(String name, String origin, String destination, Integer id) throws SQLException {
+	public static Flight createFlight(String flight_name, String origin, String destination, Integer id) throws SQLException {
 		
 		System.out.println("Please enter the name of the Airline");
 		String airlineName = input.next();
@@ -172,15 +173,30 @@ public class SystemManager extends Flight{
 		// Creating seats based on the number of seats per row
 		System.out.println("Please enter number of seats per row");
 		Integer numSeatsPerRow = input.nextInt();
-		ArrayList<Seat> seats = createSeats(numSeatsPerRow, name);
+		ArrayList<Seat> seats = createSeats(numSeatsPerRow, flight_name);
 		
 		if(seats == null){
 			System.out.println("Try again with new flight name.");
 			return null;
 		}
 		
+	String sqlQuery = "INSERT INTO flight (id, flight_name, origin, destination, airport, airline, seats)"
+				+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
+		
+		try(PreparedStatement pstat = conn.prepareStatement(sqlQuery);){
+			pstat.setInt(1, id);
+			pstat.setString(2, flight_name);
+			pstat.setString(3, origin);
+			pstat.setString(4, destination);
+			pstat.setString(5, airportName);
+			pstat.setString(6, airlineName);
+			pstat.setString(7, getTableSeatsName());
+			pstat.executeUpdate();
+			
+			System.out.println("New flight wiht name " + flight_name + " has been created in the SQL database\n");
+		}
 		// Once all needed variables and objects are available Flight is created
-		Flight flight = new Flight(id, name, airline, airport, seats, origin, destination);
+		Flight flight = new Flight(id, flight_name, airline, airport, seats, origin, destination);
 		listOfFlights.add(flight);
 		return flight;
 	}
@@ -216,6 +232,31 @@ public class SystemManager extends Flight{
 		else
 		return availableFlights;
 	}
+	
+	
+	public static List<Flight> findAvailableFlightsInMySQL(String origin, String destination) throws SQLException{
+		List<Flight> availableFlights = new ArrayList<>();
+		String sqlQuery = "SELECT * FROM flight WHERE origin = ? AND destination = ?";
+		ResultSet rs = null;
+		try(PreparedStatement pstat = conn.prepareStatement(sqlQuery);){
+			pstat.setString(1, origin);
+			pstat.setString(2, destination);
+			rs = pstat.executeQuery();
+			while(rs.next()){
+				int id = rs.getInt("id");
+				String flight_name = rs.getString("flight_name");
+				origin = rs.getString("origin");
+				destination = rs.getString("destination");
+				Airport airport = new Airport(rs.getString("airport"));
+				Airline airline = new Airline(rs.getString("airline"));
+				seats = getSeats(rs.getString("seats"));
+				Flight flight = new Flight(id, flight_name, airline, airport, seats, origin, destination);
+				availableFlights.add(flight);
+			}
+			return availableFlights;
+		}
+	}
+
 	
 	// Presentation of availability of seats in the selected Flight
 	public static Flight availableSeats(String airline, String flightName) {

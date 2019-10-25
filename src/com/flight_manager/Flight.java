@@ -31,7 +31,9 @@ public class Flight{
 	private Airport airport;
 	
 	//all seats in this flight
-	private static ArrayList<Seat> seats;
+	static ArrayList<Seat> seats;
+	
+	private static String tableSeatsName;
 	
 	//city where it takes off from
 	private String origin;
@@ -84,6 +86,7 @@ public class Flight{
 				+ "available TINYINT(1)"
 				+ ");";
 	
+		tableSeatsName = givenTableName;
 		try{
 			Statement statement = conn.createStatement();
 			statement.executeUpdate(queryTable);
@@ -137,7 +140,23 @@ public class Flight{
 		seats = newSeats;
 	}
 	
-	public ArrayList<Seat> getSeats(){
+	public static ArrayList<Seat> getSeats(String seatsTableName) throws SQLException{
+		ArrayList<Seat> listSeats = new ArrayList<>();
+		System.out.println(seatsTableName);
+		String querySQL = "SELECT * FROM seatscasino";
+		ResultSet rs = null;
+		try(Statement stat = conn.createStatement();){
+			rs = stat.executeQuery(querySQL);
+			while(rs.next()){
+				int id = rs.getInt("id");
+				Seat seat = new Seat(rs.getString("row"), rs.getInt("seat_number"), rs.getBoolean("available"));
+				listSeats.add(seat);
+			}
+		}
+		return seats;
+	}
+	
+	public static ArrayList<Seat> getSeats(){
 		return seats;
 	}
 
@@ -177,6 +196,20 @@ public class Flight{
 	 */
 	public void setFlightName(String flightName) {
 		this.flightName = flightName;
+	}
+
+	/**
+	 * @return the tableSeatsName
+	 */
+	public static String getTableSeatsName() {
+		return tableSeatsName;
+	}
+
+	/**
+	 * @param tableSeatsName the tableSeatsName to set
+	 */
+	public static void setTableSeatsName(String tableSeatsName) {
+		Flight.tableSeatsName = tableSeatsName;
 	}
 
 	@Override

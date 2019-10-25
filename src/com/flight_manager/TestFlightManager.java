@@ -139,22 +139,23 @@ public class TestFlightManager extends SystemManager{
 	}
 	
 	// CASE 4: Finding Flight
-	private static void enterOriginAndDestination() {
-		List<Flight> availableFlights = new ArrayList<>();
+	private static void enterOriginAndDestination() throws SQLException {
 		
 		System.out.println("Please enter origin of the Flight");
 		String flightOrigin = input.next();
 		System.out.println("Please enter destination of the Flight");
 		String flightDestination = input.next();
 		
-		// Searching for available flights based on entered origin and destination
-		availableFlights = findAvailableFlights(flightOrigin, flightDestination);
+		List<Flight> availableFlightsSQL = findAvailableFlightsInMySQL(flightOrigin, flightDestination);
 		
-		if(availableFlights == null)
+		// Searching for available flights based on entered origin and destination
+		List<Flight> availableFlights = findAvailableFlights(flightOrigin, flightDestination);
+		
+		if(availableFlightsSQL == null)
 			System.out.println("There are no available flights for the orgin and destination provided");
 		else{
 			// Printing available flight for the user to see and choose from
-			for(Flight flight: availableFlights){
+			for(Flight flight: availableFlightsSQL){
 				System.out.println("Available flight is " + flight.getFlightName() + " from " + flight.getOrigin() + " to "
 						+ "" + flight.getDestination());
 			}
