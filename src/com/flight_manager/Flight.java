@@ -7,9 +7,17 @@
 
 package com.flight_manager;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Flight{
+	
+	static Connection conn = ConnManagerFlights.getInstance().getConnection();
+	
 	//unique ID
 	private Integer id;
 	
@@ -62,17 +70,67 @@ public class Flight{
 	}
 
 	// Method to create seats for the Flight based on the number of seats per row
-	public static ArrayList<Seat> createSeats(Integer numberOfSeatsPerRow) {
+	public static ArrayList<Seat> createSeats(Integer numberOfSeatsPerRow, String name) throws SQLException {
 		ArrayList<Seat> seats = new ArrayList<>();
+		String givenTableName = "seats" + name;
+		if(tableExists(givenTableName)){
+			System.out.println("Seats table with name seats" + name + " already exists.");
+			return null;
+		}
+		String queryTable = "CREATE TABLE seats" + name + " ("
+				+ "id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, "
+				+ "`row` VARCHAR(1), "
+				+ "seat_number INTEGER(11), "
+				+ "available TINYINT(1)"
+				+ ");";
+	
+		try{
+			Statement statement = conn.createStatement();
+			statement.executeUpdate(queryTable);
+			System.out.println("Table seats" + name + " was created");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		String queryColumns = "INSERT INTO seats" + name + " (`row`, seat_number, available) VALUES (?, ?, ?)";
+		
+		String [] rowsSQL = {"A", "B", "C", "D", "E", "F"};
+		for(int i = 0; i < rowsSQL.length; i++){
+			for(int j = 1; j <= numberOfSeatsPerRow; j++){
+				try(PreparedStatement pstat = conn.prepareStatement(queryColumns);){
+					pstat.setString(1, rowsSQL[i]);
+					pstat.setInt(2, j);
+					pstat.setBoolean(3, true);
+					pstat.executeUpdate();
+				}
+			}
+		}
+		conn.clearWarnings();
+		
 		Seat seat;
 		String [] rows = {"A", "B", "C", "D", "E", "F"};
-		for(int i = 0; i < rows.length; i++){
-			for(int j = 1; j <= numberOfSeatsPerRow; j++){
-				seat = new Seat(rows[i], j, true);
+		for(int a = 0; a < rows.length; a++){
+			for(int b = 1; b <= numberOfSeatsPerRow; b++){
+				seat = new Seat(rows[a], b, true);
 				seats.add(seat);
 			}
 		}
 		return seats;
+	}
+	
+	private static boolean tableExists(String givenTableName) throws SQLException {
+		String sqlQuery = "SHOW TABLES";
+		String test1 = null;
+		ResultSet rs = null;
+		try(Statement stat = conn.createStatement();){
+			rs = stat.executeQuery(sqlQuery);
+			while(rs.next()){
+				test1 = rs.getString("Tables_in_flights");
+				if(test1.equals(givenTableName))
+					return true;
+			}
+			return false;
+		}
 	}
 
 	public static void setSeats(ArrayList<Seat> newSeats) {

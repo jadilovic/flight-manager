@@ -93,7 +93,7 @@ public class SystemManager extends Flight{
 	}
 
 	// Checking conditions before creating Airline
-	public static Airline createAirline(String name) {
+	public static Airline createAirline(String name) throws SQLException {
 		if(airlineAlreadyExists(name)){
 			System.out.println("Entered Airline name '" + name + "' already exists");
 			return null;
@@ -108,6 +108,12 @@ public class SystemManager extends Flight{
 		}
 		// Creating Airline if given name meets all criteria
 		else{
+			String sqlQuery = "INSERT INTO airline (name) VALUES (?)";
+		
+			try(PreparedStatement pstat = conn.prepareStatement(sqlQuery);){
+				pstat.setString(1, name);
+				pstat.executeUpdate();
+			}
 			Airline airLineName = new Airline(name);
 			listOfAirlines.add(airLineName);
 			return airLineName;
@@ -115,43 +121,63 @@ public class SystemManager extends Flight{
 	}
 	
 	// Checking if the given name of the Airline already exists
-	private static boolean airlineAlreadyExists(String name) {
-		if(listOfAirlines == null)
-			return false;
-		for(Airline airline: listOfAirlines){
-			if(airline.getName().equals(name))
+	private static boolean airlineAlreadyExists(String name) throws SQLException {
+		String sqlQuery = "SELECT * FROM airline WHERE name = ?";
+		String test1 = null;
+		ResultSet rs = null;
+		try(PreparedStatement pstat = conn.prepareStatement(sqlQuery);){
+			pstat.setString(1, name);
+			rs = pstat.executeQuery();
+			while(rs.next()){
+				test1 = rs.getString("name");
+			}
+			if(test1 == null)
+				return false;
+			else
 				return true;
 		}
-		return false;
+		// if(listOfAirlines == null)
+		//	return false;
+		// for(Airline airline: listOfAirlines){
+		//	if(airline.getName().equals(name))
+		//		return true;
+		//}
+		// return false;
 	}
 
 	// Before flight is created additional data must be entered by the user
-	public static Flight createFlight(String name, String origin, String destination, Integer id) {
+	public static Flight createFlight(String name, String origin, String destination, Integer id) throws SQLException {
 		
 		System.out.println("Please enter the name of the Airline");
 		String airlineName = input.next();
-		Airline airline = getAirline(airlineName);
-		
+		// Airline airline = getAirline(airlineName);
 		// To create a Flight Airline must exist
-		if(airline == null){
+		if(!airlineAlreadyExists(airlineName)){
 			System.out.println("Entered Airline named " + airlineName + " does NOT exist");
 			return null;
 		}
+		Airline airline = new Airline(airlineName);
 		
 		System.out.println("Please enter the name of the Airport");
 		String airportName = input.next();
-		Airport airport = getAirport(airportName);
+		// Airport airport = getAirport(airportName);
 		
 		// To create a Flight Airport must exist
-		if(airport == null){
+		if(!airportAlreadyExists(airportName)){
 			System.out.println("Entered Airport named " + airportName  + " does NOT exist");
 			return null;
 		}
+		Airport airport = new Airport(airportName);
 		
 		// Creating seats based on the number of seats per row
 		System.out.println("Please enter number of seats per row");
 		Integer numSeatsPerRow = input.nextInt();
-		ArrayList<Seat> seats = createSeats(numSeatsPerRow);
+		ArrayList<Seat> seats = createSeats(numSeatsPerRow, name);
+		
+		if(seats == null){
+			System.out.println("Try again with new flight name.");
+			return null;
+		}
 		
 		// Once all needed variables and objects are available Flight is created
 		Flight flight = new Flight(id, name, airline, airport, seats, origin, destination);

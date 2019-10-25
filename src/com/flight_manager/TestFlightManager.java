@@ -25,6 +25,7 @@ package com.flight_manager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -45,8 +46,12 @@ public class TestFlightManager extends SystemManager{
 				+ "5 to book a seat on a flight. \n"
 				+ "6 to exit the application.");
 		
+		try{
 			option = input.nextInt();
-		
+		} catch(InputMismatchException ime){
+			System.out.println("Wrong data entered. Please try again");
+			option = 6;
+		}
 			switch(option){
 			case 1: 
 				// Create Airport
@@ -92,7 +97,7 @@ public class TestFlightManager extends SystemManager{
 	}
 	
 	// CASE 2: Asking for name to create Airline
-	private static void enterAirlineName() {
+	private static void enterAirlineName() throws SQLException {
 		System.out.println("Please enter the name of the Airline");
 		String givenName = input.next();
 		
@@ -105,7 +110,7 @@ public class TestFlightManager extends SystemManager{
 	}
 	
 	// CASE 3: Create a Flight
-	private static void enterFlightData() {
+	private static void enterFlightData() throws SQLException {
 		
 		// Collecting input of initial data to create a flight
 		System.out.println("Please enter the name of the Flight");
